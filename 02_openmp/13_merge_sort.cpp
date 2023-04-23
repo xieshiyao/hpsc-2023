@@ -27,15 +27,18 @@ void merge_sort(std::vector<int>& vec, int begin, int end)
 	if (begin < end)
 	{
 		int mid = (begin + end) / 2;
+#pragma omp task shared(vec)
 		merge_sort(vec, begin, mid);
+#pragma omp task shared(vec)
 		merge_sort(vec, mid + 1, end);
+#pragma omp taskwait
 		merge(vec, begin, mid, end);
 	}
 }
 
 int main()
 {
-	int n = 20;
+	int n = 20000000;
 	std::vector<int> vec(n);
 	for (int i = 0; i < n; i++)
 	{
@@ -43,6 +46,8 @@ int main()
 		printf("%d ", vec[i]);
 	}
 	printf("\n");
+#pragma omp parallel
+#pragma omp single
 	merge_sort(vec, 0, n - 1);
 	for (int i = 0; i < n; i++)
 	{

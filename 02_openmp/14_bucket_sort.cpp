@@ -5,7 +5,7 @@
 int main()
 {
 	int n = 50;
-	int range = 5;
+	int range = 17;
 	std::vector<int> key(n);
 	for (int i = 0; i < n; i++)
 	{
@@ -14,24 +14,40 @@ int main()
 	}
 	printf("\n");
 
-	std::vector<int> bucket(range, 0);
+	std::vector<int> bucket(range);
+#pragma omp parallel for
 	for (int i = 0; i < n; i++)
+	{
+#pragma omp atomic update
 		bucket[key[i]]++;
-	std::vector<int> offset(range, 0);
+	}
+
+	std::vector<int> offset(range);
+	// for (int i = 1; i < range; i++)
+	// 	offset[i] = offset[i - 1] + bucket[i - 1];
+#pragma omp parallel for
 	for (int i = 1; i < range; i++)
-		offset[i] = offset[i - 1] + bucket[i - 1];
+		offset[i] = bucket[i - 1];
+	std::vector<int> temp(range);
+	for (int step = 1; step < range; step <<= 1)
+	{
+#pragma omp parallel for
+		for (int i = 0; i < range; i++)
+			temp[i] = offset[i];
+#pragma omp parallel for
+		for (int i = step; i < range; i++)
+			offset[i] += temp[i - step];
+	}
+
+#pragma omp parallel for
 	for (int i = 0; i < range; i++)
 	{
 		int j = offset[i];
 		for (; bucket[i] > 0; bucket[i]--)
-		{
 			key[j++] = i;
-		}
 	}
 
 	for (int i = 0; i < n; i++)
-	{
 		printf("%d ", key[i]);
-	}
 	printf("\n");
 }
