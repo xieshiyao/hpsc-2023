@@ -25,4 +25,4 @@
 12_intrinsic_sin: 12_intrinsic_sin.cpp
 	icc 12_intrinsic_sin.cpp -xHost
 13_nbody: 13_nbody.cpp
-	g++ 13_nbody.cpp -march=native -O3
+	icc 13_nbody.cpp -march=native -O3
