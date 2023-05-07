@@ -23,50 +23,28 @@ void matmult(matrix &A, matrix &B, matrix &C, int N)
 		{
 			float Bc[kc * nc];
 			for (int p = 0; p < kc; p++)
-			{
 				for (int j = 0; j < nc; j++)
-				{
 					Bc[p * nc + j] = B[p + pc][j + jc];
-				}
-			}
 			for (int ic = 0; ic < m; ic += mc)
 			{
 				float Ac[mc * kc], Cc[mc * nc];
 				for (int i = 0; i < mc; i++)
 				{
 					for (int p = 0; p < kc; p++)
-					{
 						Ac[i * kc + p] = A[i + ic][p + pc];
-					}
 					for (int j = 0; j < nc; j++)
-					{
 						Cc[i * nc + j] = 0;
-					}
 				}
 				for (int jr = 0; jr < nc; jr += nr)
-				{
 					for (int ir = 0; ir < mc; ir += mr)
-					{
 						for (int kr = 0; kr < kc; kr++)
-						{
 							for (int i = ir; i < ir + mr; i++)
-							{
 								for (int j = jr; j < jr + nr; j++)
-								{
 									Cc[i * nc + j]
 										+= Ac[i * kc + kr] * Bc[kr * nc + j];
-								}
-							}
-						}
-					}
-				}
 				for (int i = 0; i < mc; i++)
-				{
 					for (int j = 0; j < nc; j++)
-					{
 						C[i + ic][j + jc] += Cc[i * nc + j];
-					}
-				}
 			}
 		}
 	}
@@ -102,5 +80,5 @@ int main()
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			err += fabs(C[i][j]);
-	// printf("error: %lf\n",err/N/N);
+	// printf("error: %lf\n", err / N / N);
 }
